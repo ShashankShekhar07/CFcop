@@ -3,9 +3,11 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 const crypto = require("crypto");
+const cors= require("cors");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 dotenv.config({ path: "config.env" });
 
@@ -57,37 +59,79 @@ app.post('/getcheaters', async (req, res) => {
             return res.status(400).json({ success: false, message: "Invalid data format received from API." });
         }
 
+        // let cheaters = [];
+        // for (const c of realdata) {
+        //     const response = await fetch(`https://codeforces.com/api/user.status?handle=${c}`);
+        //     const result = await response.json();
+
+        //     const solved = result.result
+        //         .filter(submission => submission.author.participantType === 'CONTESTANT' || submission.author.participantType === 'OUT_OF_COMPETITION')
+        //         .reduce((acc, submission) => {
+        //             if (!acc[submission.contestId]) {
+        //                 acc[submission.contestId] = {
+        //                     contestId: submission.contestId,
+        //                     Problems: 0,
+        //                     skippedProblems: 0
+        //                 };
+        //             }
+        //             acc[submission.contestId].Problems++;
+        //             if (submission.verdict === 'SKIPPED') {
+        //                 acc[submission.contestId].skippedProblems++;
+        //             }
+        //             return acc;
+        //         }, {});
+
+        //     const cheatedContests = Object.values(solved)
+        //         .filter(contest => {
+        //             return contest.skippedProblems === contest.Problems;
+        //         });
+
+        //     if (Object.keys(cheatedContests).length > 0) {
+        //         cheaters.push(c);
+        //     }
+        // }
+
         let cheaters = [];
-        for (const c of realdata) {
-            const response = await fetch(`https://codeforces.com/api/user.status?handle=${c}`);
-            const result = await response.json();
 
-            const solved = result.result
-                .filter(submission => submission.author.participantType === 'CONTESTANT' || submission.author.participantType === 'OUT_OF_COMPETITION')
-                .reduce((acc, submission) => {
-                    if (!acc[submission.contestId]) {
-                        acc[submission.contestId] = {
-                            contestId: submission.contestId,
-                            Problems: 0,
-                            skippedProblems: 0
-                        };
-                    }
-                    acc[submission.contestId].Problems++;
-                    if (submission.verdict === 'SKIPPED') {
-                        acc[submission.contestId].skippedProblems++;
-                    }
-                    return acc;
-                }, {});
+for (const c of realdata) {
+    const response = await fetch(`https://codeforces.com/api/user.status?handle=${c}`);
+    const result = await response.json();
 
-            const cheatedContests = Object.values(solved)
-                .filter(contest => {
-                    return contest.skippedProblems === contest.Problems;
-                });
-
-            if (Object.keys(cheatedContests).length > 0) {
-                cheaters.push(c);
+    const solved = result.result
+        .filter(submission => submission.author.participantType === 'CONTESTANT' || submission.author.participantType === 'OUT_OF_COMPETITION')
+        .reduce((acc, submission) => {
+            if (!acc[submission.contestId]) {
+                acc[submission.contestId] = {
+                    contestId: submission.contestId,
+                    Problems: 0,
+                    skippedProblems: 0
+                };
             }
-        }
+            acc[submission.contestId].Problems++;
+            if (submission.verdict === 'SKIPPED') {
+                acc[submission.contestId].skippedProblems++;
+            }
+            return acc;
+        }, {});
+
+    const cheatedContests = Object.values(solved)
+        .filter(contest => {
+            return contest.skippedProblems === contest.Problems;
+        });
+
+    if (cheatedContests.length > 0) {
+        const cheaterObj = {
+            cheaterName: c,
+            contests: cheatedContests.map(contest => contest.contestId)
+        };
+        cheaters.push(cheaterObj);
+    }
+}
+
+// Output the cheaters array
+    cheaters.sort((a, b) => b.contests.length - a.contests.length);
+    console.log(cheaters);
+
 
         res.json({
             success: true,
