@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import './Home.css';
 import axios from 'axios';
 
+
 function Home() {
   const [apiKey, setApiKey] = useState('');
   const [secretKey, setSecretKey] = useState('');
   const [cheaters, setCheaters] = useState([]);
   const [loading, setLoading] = useState(false); // Add loading state
-
+  const url=process.env.REACT_APP_URL;
+  console.log(url)
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("API Key:", apiKey);
@@ -16,7 +18,8 @@ function Home() {
     setLoading(true); // Set loading to true when the request starts
 
     try {
-      const response = await axios.post('http://localhost:4000/getcheaters', {
+
+      const response = await axios.post(`${url}/getcheaters`, {
         apikey: apiKey,
         secretkey: secretKey,
       });

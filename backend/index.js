@@ -1,4 +1,4 @@
-const port = 4000;
+
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 dotenv.config({ path: "config.env" });
-
+const port = process.env.PORT || 4000;
 function sha512(data) {
     const hash = crypto.createHash("sha512");
     hash.update(data);
