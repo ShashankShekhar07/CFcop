@@ -8,8 +8,8 @@ function Home() {
   const [secretKey, setSecretKey] = useState('');
   const [cheaters, setCheaters] = useState([]);
   const [loading, setLoading] = useState(false); // Add loading state
-  const url=process.env.REACT_APP_URL;
-  console.log(url)
+  // const url=process.env.REACT_APP_URL;
+  // console.log(url)
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("API Key:", apiKey);
@@ -19,7 +19,7 @@ function Home() {
 
     try {
 
-      const response = await axios.post(`${url}/getcheaters`, {
+      const response = await axios.post(`https://cfcopbackend-ihg1xy1pw-shashanks-projects-b7472e44.vercel.app/getcheaters`, {
         apikey: apiKey,
         secretkey: secretKey,
       });
