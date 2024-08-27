@@ -19,7 +19,7 @@ function Home() {
 
     try {
 
-      const response = await axios.post(`https://cfcopbackend-7b35x87dt-shashanks-projects-b7472e44.vercel.app/getcheaters`, {
+      const response = await axios.post(`http://localhost:4000/getcheaters`, {
         apikey: apiKey,
         secretkey: secretKey,
       });
