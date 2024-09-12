@@ -7,7 +7,10 @@ const cors= require("cors");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({
+    origin: process.env.CORS_LINK , // Allow frontend's origin
+    methods: 'GET,POST,PUT,DELETE',
+}));
 
 dotenv.config({ path: "config.env" });
 const port = process.env.PORT || 4000;
@@ -79,9 +82,10 @@ for (const c of realdata) {
             if (submission.verdict === 'SKIPPED') {
                 acc[submission.contestId].skippedProblems++;
             }
+            // console.log(acc);
             return acc;
         }, {});
-
+        // console.log(Object.values(solved));
     const cheatedContests = Object.values(solved)
         .filter(contest => {
             return contest.skippedProblems === contest.Problems;
@@ -96,7 +100,6 @@ for (const c of realdata) {
     }
 }
 
-// Output the cheaters array
     cheaters.sort((a, b) => b.contests.length - a.contests.length);
     console.log(cheaters);
 

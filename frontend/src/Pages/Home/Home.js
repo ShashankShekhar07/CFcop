@@ -19,7 +19,7 @@ function Home() {
 
     try {
 
-      const response = await axios.post(`http://localhost:4000/getcheaters`, {
+      const response = await axios.post(`https://cfcop.onrender.com/getcheaters`, {
         apikey: apiKey,
         secretkey: secretKey,
       });
